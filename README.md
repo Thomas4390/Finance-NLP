@@ -27,4 +27,11 @@ BioBERT, un modèle de représentation du langage biomédical pré-entraîné po
 
 Dans l'analyse habituelle des sentiments, une déclaration positive implique une émotion positive. Mais dans la banque de phrases financières, un sentiment négatif implique que le cours de l'action de l'entreprise peut chuter à cause de la nouvelle publiée. FinBERT a donné de bons résultats avec une précision de 0,97 et un F1 de 0,95, ce qui est nettement supérieur aux autres outils disponibles. La bibliothèque FinBERT est ouverte sur GitHub avec les données pertinentes. Ce modèle linguistique robuste pour la classification du sentiment économique peut être utilisé à différentes fins.
 
+## Liens utiles :
+
+- Lien de l'article "Understanding NLP" : https://www.avenga.com/magazine/nlp-finance-applications/
+- Lien de l'article "Sentiment analysis. Google Natural Language Processing vs Custom Algorithm" : https://www.avenga.com/magazine/sentiment-analysis/
+
+
+
 
