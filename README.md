@@ -32,6 +32,15 @@ Dans l'analyse habituelle des sentiments, une déclaration positive implique une
 - Lien de l'article "Understanding NLP" : https://www.avenga.com/magazine/nlp-finance-applications/
 - Lien de l'article "Sentiment analysis. Google Natural Language Processing vs Custom Algorithm" : https://www.avenga.com/magazine/sentiment-analysis/
 
+## Les étapes du projet :
+
+1. Web Scrapper les informations des 500 plus grandes compagnies du S&P 500 directement sur la page Wikipédia
+2. Recherche sur le site Yahoo Finance des statistiques clés, des états financiers et de l'historique du cours de l'action. 
+3. Création d'une application à plusieurs niveaux pour déterminer la solidité financière de l'entreprise (analyse fondamentale via le F-Score de Piotroski).
+4. Recherche de titres d'articles de presse sur Finviz.
+5. Réalisation d'une analyse des sentiments sur les titres des articles d'actualité.
+6. Analyse des données et interprétation des résultats
+
 
 
 
