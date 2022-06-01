@@ -18,7 +18,7 @@ Par exemple, DataMinr a fourni à ses utilisateurs, sur ses terminaux, des alert
 
 ## Différences entre l'analyse de sentiment 'classique' et 'financière'
 
-L'analyse des sentiments financiers est différente de l'analyse des sentiments de routine. Elle est différente à la fois dans son domaine et dans son objectif. Dans l'analyse de sentiment ordinaire, l'objectif est de trouver si l'information est intrinsèquement positive ou non. Cependant, dans l'analyse du sentiment financier basée sur la PNL, l'objectif est de voir si le marché va réagir à la nouvelle et si le cours de l'action va baisser ou augmenter.
+L'analyse des sentiments financiers est différente de l'analyse des sentiments de routine. Elle est différente à la fois dans son domaine et dans son objectif. Dans l'analyse de sentiment ordinaire, l'objectif est de trouver si l'information est intrinsèquement positive ou non. Cependant, dans l'analyse du sentiment financier basée sur le NLP, l'objectif est de voir si le marché va réagir à la nouvelle et si le cours de l'action va baisser ou augmenter.
 
 
 ## Quel modèle de NLP pré entrainé à notre disposition ?
