@@ -26,6 +26,10 @@ for i in table1.find_all("th"):
     title = i.text
     headers.append(title)
 
+headers_clean = [header.replace("\n", "") for header in headers]
+
+print(headers_clean)
+
 
 
 
