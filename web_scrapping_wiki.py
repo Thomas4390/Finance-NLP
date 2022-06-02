@@ -45,12 +45,17 @@ for j in table1.find_all("tr")[1:]:
     length = len(df)
     df.loc[length] = row
 
-
+#Nettoyage des données (principalement pour les espaces)
 
 for col in df.columns:
     df[col] = df[col].str.replace("\n", "")
 
 df["Founded"] = df["Founded"].str[:4]
 
+print(df.head(10))
+
+# On exporte au format csv
+
+df.to_csv("sp500.csv", index=False)
 
 
