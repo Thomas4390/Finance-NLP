@@ -26,12 +26,31 @@ for i in table1.find_all("th"):
     title = i.text
     headers.append(title)
 
+# On nettoie les headers pour enlever les espaces
+
 headers_clean = [header.replace("\n", "") for header in headers]
 
 print(headers_clean)
 
+# on creer une Dataframe
+
+df = pd.DataFrame(columns=headers_clean)
 
 
+# Create a for loop to fill mydata
+for j in table1.find_all("tr")[1:]:
+
+    row_data = j.find_all("td")
+    row = [i.text for i in row_data]
+    length = len(df)
+    df.loc[length] = row
+
+
+
+for col in df.columns:
+    df[col] = df[col].str.replace("\n", "")
+
+df["Founded"] = df["Founded"].str[:4]
 
 
 
