@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Importations des librairies
 
 import requests
@@ -47,6 +48,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
