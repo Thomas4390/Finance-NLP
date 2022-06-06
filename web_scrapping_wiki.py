@@ -4,58 +4,49 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
-# Lien URL
-url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
 
-page = requests.get(url)
+def GetTable():
+    url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
+    headers = []
 
-# On change le parseur pour qu'il soit plus compatible avec le format Python
-# On obtient l'information de la page
-# Ne pas oublier de pip install le parseur avant de lancer le script
+    page = requests.get(url)
+    soup = BeautifulSoup(page.text, "lxml")
+    table = soup.find(
+        "table", {"class": "wikitable sortable"}, id="constituents")
 
-soup = BeautifulSoup(page.text, "lxml")
+    for i in table.find_all("th"):
+        title = i.text
+        headers.append(title)
 
-# On obtient l'information depuis le tag HTML <table>
-
-table1 = soup.find("table", {"class": "wikitable sortable"}, id="constituents")
-
-# Le but est maintenant d'obtenir tous les titres de chaque colonne grâce au tag <th>
-
-headers = []
-for i in table1.find_all("th"):
-    title = i.text
-    headers.append(title)
-
-# On nettoie les headers pour enlever les espaces
-
-headers_clean = [header.replace("\n", "") for header in headers]
-
-print(headers_clean)
-
-# on creer une Dataframe
-
-df = pd.DataFrame(columns=headers_clean)
+    headers_clean = [header.replace("\n", "") for header in headers]
+    return (headers_clean, table)
 
 
-# Create a for loop to fill mydata
-for j in table1.find_all("tr")[1:]:
+def SaveTab(headers_clean, tab):
+    df = pd.DataFrame(columns=headers_clean)
 
-    row_data = j.find_all("td")
-    row = [i.text for i in row_data]
-    length = len(df)
-    df.loc[length] = row
+    for j in tab.find_all("tr")[1:]:
+        row_data = j.find_all("td")
+        row = [i.text for i in row_data]
+        length = len(df)
+        df.loc[length] = row
 
-#Nettoyage des données (principalement pour les espaces)
+    for col in df.columns:
+        df[col] = df[col].str.replace("\n", "")
 
-for col in df.columns:
-    df[col] = df[col].str.replace("\n", "")
+    df["Founded"] = df["Founded"].str[:4]
+    #print(df.head(10))
+    df.to_csv("sp500.csv", index=False)
 
-df["Founded"] = df["Founded"].str[:4]
 
-print(df.head(10))
+def main():
+    headers_clean, tab = GetTable()
+    SaveTab(headers_clean, tab)
+    return (0)
 
-# On exporte au format csv
 
-df.to_csv("sp500.csv", index=False)
+if __name__ == "__main__":
+    main()
+
 
 
