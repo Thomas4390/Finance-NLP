@@ -114,4 +114,4 @@ for i in range(len(news_table_td_text_list)):
     news_table_td_text_list[i][0] = dates_list[i]
     news_table_cleaned.append(news_table_td_text_list[i])
 
-st.write(news_table_cleaned[0:5])
+st.write(news_table_cleaned[0:10])
