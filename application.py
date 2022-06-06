@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import numpy as np
 from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
@@ -6,8 +7,7 @@ import pandas as pd
 import streamlit as st
 
 
-
-# On charge les données depuis le fichier sp500 csv qui nous servira à récupérer le nom des tickers
+# On charge les données depuis le fichier sp500 csv qui nous servira à récupérer le nom dst.es tickers
 df = pd.read_csv("sp500.csv")
 
 
