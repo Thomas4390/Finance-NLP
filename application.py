@@ -29,9 +29,29 @@ news_table = html.find(id='news-table')
 
 news_table_tr = news_table.find_all('tr')
 
+news_table_td_text_list = []
+
 for index, row in enumerate(news_table_tr):
-    if index == 0:
-        continue
     news_table_td = row.find_all('td')
+    print(news_table_td[0].text)
     news_table_td_text = [td.text for td in news_table_td]
-    st.write(news_table_td_text[1])
+    st.write(news_table_td_text)
+    news_table_td_text_list.append(news_table_td_text)
+
+news_table_td_text_list_cleaned = []
+
+for index in range(len(news_table_td_text_list)):
+
+    date = news_table_td_text_list[index][0]
+
+# Correspond à une date complète du type : mmm-JJ-AA HH:MM(AM/PM)
+
+    if (len(date) > 15):
+
+        news_table_td_text_list_cleaned.append(date[0:17])
+
+    else:
+
+        news_table_td_text_list_cleaned.append(date[0:7])
+
+print(news_table_td_text_list_cleaned)
