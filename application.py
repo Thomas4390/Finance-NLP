@@ -51,7 +51,6 @@ news_table_td_text_list = []
 for index, row in enumerate(news_table_tr):
     news_table_td = row.find_all('td')
     news_table_td_text = [td.text for td in news_table_td]
-    st.write(news_table_td_text)
     news_table_td_text_list.append(news_table_td_text)
 
 
@@ -106,4 +105,13 @@ dates_series_combined = date_series + " " + time_series
 
 # On convertit la Series au format dateTime (plus facile pour faire des manipulations)
 dates_series_dt = pd.to_datetime(dates_series_combined)
-print(dates_series_dt)
+
+dates_list = dates_series_dt.tolist()
+
+news_table_cleaned = []
+
+for i in range(len(news_table_td_text_list)):
+    news_table_td_text_list[i][0] = dates_list[i]
+    news_table_cleaned.append(news_table_td_text_list[i])
+
+st.write(news_table_cleaned[0:5])
