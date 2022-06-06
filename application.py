@@ -54,4 +54,4 @@ for index in range(len(news_table_td_text_list)):
 
         news_table_td_text_list_cleaned.append(date[0:7])
 
-print(news_table_td_text_list_cleaned)
+st.write(news_table_td_text_list_cleaned)
