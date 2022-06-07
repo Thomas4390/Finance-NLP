@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/local/bin/python3
 import numpy as np
 from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
