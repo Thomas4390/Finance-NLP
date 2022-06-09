@@ -7,111 +7,176 @@ import pandas as pd
 import streamlit as st
 
 
-# On charge les données depuis le fichier sp500 csv qui nous servira à récupérer le nom dst.es tickers
-df = pd.read_csv("sp500.csv")
+def get_news_table_finviz():
+
+    """This function allows you to obtain the news table from the symbol (ticker) of an action selected directly in the Streamlit application. 
+    We are getting the data from Finviz.
+        Parameters:
+        -----------
+
+        Returns:
+        --------
+        An html object containing the news table.
+    """
+    try:
+        
+        df = pd.read_csv("sp500.csv") # Loading Data in a DataFrame
+
+        tickers = df["Symbol"].unique() # Making sure that all tickers are unique
+        ticker = st.sidebar.selectbox("Choose a ticker", tickers) # Letting the users to choose a ticker directly in the Streamlit application
+
+        st.write("You selected: ", ticker)
+
+        finviz_url = "https://finviz.com/quote.ashx?t=" # Finviz url without the ticker specified
+        session_obj = requests.Session() # Creating a session object
+        ticker_url = finviz_url + ticker # Finviz url with the ticker specified
+
+        response = session_obj.get(ticker_url, headers={"User-Agent": "Mozilla/5.0"}) # Response object from the session object. return 200 if ok. return 404 if not.
+
+        html = BeautifulSoup(response.text, "html.parser") # Parsing the html code
+        news_table = html.find(id='news-table') # Finding the news table
+
+        return news_table # Returning the news table
+
+    except:
+        st.write("Error getting the news table")
+        exit(84) 
 
 
-# On s'assure que pour chaque ticker le nom est unique
-tickers = df["Symbol"].unique()
+def extracting_date_and_title(news_table) -> list:
+    """This function extracts the date and title of the news from the news table. 
 
-# On créer une side bar qui nous permettra de choisir le ticker dans l'application
-ticker = st.sidebar.selectbox("Choose a ticker", tickers)
+    Parameters
+    ----------
+    news_table : html object
+        The news table from the Finviz website.
 
-# On affiche ce qu'on à sélectionné dans la side bar
-st.write("You selected: ", ticker)
+    Returns
+    -------
+    list
+        A list of the date and title for each article.
+    """
 
-# url du site web qui nous permettra de récupérer les données en web scrapping
-finviz_url = "https://finviz.com/quote.ashx?t="
+    try:
 
-# Session de requête (sans cela on obtient une erreur)
-session_obj = requests.Session()
+        news_table_tr = news_table.find_all('tr') # Getting <tr> tags from the news table
 
-# url complète de la requête grâce au ticker
-ticker_url = finviz_url + ticker
+        # The goal here is to create a list that will contain the different information of the table in the following format:
+        # [0: "Article date", 1: "Article title"]
+        news_table_td_text_list = []
 
-# Réponse du site. Si tout est ok renvoie 200. 
-response = session_obj.get(ticker_url, headers={"User-Agent": "Mozilla/5.0"})
+        for index, row in enumerate(news_table_tr):
+            news_table_td = row.find_all('td')
+            news_table_td_text = [td.text for td in news_table_td]
+            news_table_td_text_list.append(news_table_td_text)
 
-st.write(f"Status code: {response.status_code}")
+        return news_table_td_text_list
 
-# On accède au code HTML de la page
-html = BeautifulSoup(response.text, "html.parser")
+    except:
+        st.write("Error extracting date and title")
+        exit(84)
 
-# On filtre la page HTML pour se retrouver seulement avec la table qui contient le nom des différents articles.
-news_table = html.find(id='news-table')
+def dates_to_clean_datetime_dates(news_table_td_text_list) -> list:
+    """This function clean the date and convert them into a datetime format.
 
-# On filtre encore pour ne garder que les tags <tr>
-news_table_tr = news_table.find_all('tr')
+    Parameters
+    ----------
+    news_table_td_text_list : 
+        A list of the date and title for each article.
+
+    Returns
+    -------
+    list(datetime.datetime)
+        A list of the cleaned date in datetime format.
+    """
+    try:
+        # After having obtained this list, we would like to keep only the dates: [0: "Date of the article"]
+        news_table_td_text_list_date_cleaned = []
+
+        for index in range(len(news_table_td_text_list)):
+
+            date = news_table_td_text_list[index][0]
+
+        # Corresponds to a complete date of the type: mmm-DD-YY HH:MM(AM/PM)
+        # We realize that there is a little cleaning to do to remove the spaces at the end of the date
+        # If the date exceeds 15 characters it is of type: mmm-DD-YY HH:MM(AM/PM)
+        # Otherwise, it is of type: HH:MM(AM/PM)
+        # There are 100% better ways to clean, but to be improved later.
+            if (len(date) > 15):
+                news_table_td_text_list_date_cleaned.append(date[0:17])
+
+            else:
+                news_table_td_text_list_date_cleaned.append(date[0:7])
+
+        # We convert the list of dates into a dataframe (Series)
+        # This will be more convenient to do manipulations with, such as changing the dates to datetime format or adding
+        # two series together.
+        dates_series = pd.Series(news_table_td_text_list_date_cleaned)
+        dates_series_split = dates_series.str.split(" ")
+
+        # Here, we realize that we cannot split the Series in two because within the Series we will have lists of size 1 and size 2.
+        # To overcome this, we add an empty column in the Series when the date is of type: HH:MM(AM/PM)
+        for i in range(len(dates_series_split)):
+            if (len(dates_series_split[i]) == 1):
+                dates_series_split[i] = [None] + dates_series_split[i]
+
+        # We can now separate the two lists into two distinct columns.
+        # We take the opportunity to replace the None values by the previous ones thanks to the ffill() function
+        date_series = dates_series_split.str[0].ffill()
+        time_series = dates_series_split.str[1]
+
+        # We combine the two series into a dataframe
+        dates_series_combined = date_series + " " + time_series
+
+        # Convert the Series to dateTime format (easier to do manipulations)
+        dates_series_dt = pd.to_datetime(dates_series_combined)
+
+        # We can now convert the Series to a list
+        dates_list = dates_series_dt.tolist()
+
+        return dates_list
+
+    except:
+        st.write("Error extracting date and title")
+        exit(84)
 
 
-# Le but ici est de créer une liste qui contiendra les différentes informations de la table au format suivant :
-# [0: "Date de l'article", 1: "Titre de l'article"]
-news_table_td_text_list = []
+def append_dates_and_title(dates_list, news_table_td_text_list) -> list:
+    """This function append the date and title of the news to the list of dates.
 
-for index, row in enumerate(news_table_tr):
-    news_table_td = row.find_all('td')
-    news_table_td_text = [td.text for td in news_table_td]
-    news_table_td_text_list.append(news_table_td_text)
+    Parameters
+    ----------
+    dates_list : list(datetime.datetime)
+        A list of the cleaned date in datetime format.
+    news_table_td_text_list : list
+        A list of the date and title for each article.
 
+    Returns
+    -------
+    list(datetime.datetime, string)
+        A list of the cleaned date and title for each article.
+    """
+    try:
+        news_table_cleaned = []
+        # Replacing old dates with new dates and appending the title to the list
+        for i in range(len(news_table_td_text_list)):
+            news_table_td_text_list[i][0] = dates_list[i]
+            news_table_cleaned.append(news_table_td_text_list[i])
 
-# Après avoir obtenue cette liste, on aimerait ne conserver que les dates : [0: "Date de l'article"]
-news_table_td_text_list_cleaned = []
+        return news_table_cleaned
 
-for index in range(len(news_table_td_text_list)):
+    except:
+        st.write("Error appending date and title")
+        exit(84)
 
-    date = news_table_td_text_list[index][0]
+def main():
+    """This function is the main function of the application."""
+    news_table = get_news_table_finviz()
+    news_table_td_text_list = extracting_date_and_title(news_table)
+    dates_list = dates_to_clean_datetime_dates(news_table_td_text_list)
+    news_table_cleaned = append_dates_and_title(dates_list, news_table_td_text_list)
+    st.write(news_table_cleaned)
 
-# Correspond à une date complète du type : mmm-JJ-AA HH:MM(AM/PM)
-# On se rend compte qu'il y a un peu de nettoyage à faire pour enlever les espaces à la fin de la date
-# Si la date dépasse 15 caractères c'est qu'elle est du type : mmm-JJ-AA HH:MM(AM/PM)
-# Sinon, elle est du type : HH:MM(AM/PM)
-# Il existe à 100% de meilleures manières de nettoyer, mais à améliorer plus tard. 
-    if (len(date) > 15):
+if __name__ == '__main__':
+    main()
 
-        news_table_td_text_list_cleaned.append(date[0:17])
-
-    else:
-
-        news_table_td_text_list_cleaned.append(date[0:7])
-
-
-# Nouveau nom de variable plus concis
-
-dates = news_table_td_text_list_cleaned
-
-# On convertit la liste de dates en dataframe (Series)
-# Cela sera plus pratique pour faire des manipulations avec, comme par exemple changer les date ern format datetime ou encore ajouter
-# deux series ensembles. 
-
-dates_series = pd.Series(dates)
-
-dates_series_split = dates_series.str.split(" ")
-
-
-# Ici, on se rend compte qu'on ne pourra pas split la Series en deux car au sein de la Series on aura des listes de taille 1 et de taille 2. 
-# Pour pallier à cela, on ajoute une colonne vide dans la Series lorsque la date est du type : HH:MM(AM/PM)
-for i in range(len(dates_series_split)):
-    if (len(dates_series_split[i]) == 1):
-        dates_series_split[i] = [None] + dates_series_split[i]
-
-
-# On peut maintenant séparer les deux listes en deux colonnes distinctes. 
-# on en profite pour remplacer les valeurs None par les valeurs précédentes grâce à la fonction ffill()
-date_series = dates_series_split.str[0].ffill()
-time_series = dates_series_split.str[1]
-
-# on combine les deux series
-dates_series_combined = date_series + " " + time_series
-
-# On convertit la Series au format dateTime (plus facile pour faire des manipulations)
-dates_series_dt = pd.to_datetime(dates_series_combined)
-
-dates_list = dates_series_dt.tolist()
-
-news_table_cleaned = []
-
-for i in range(len(news_table_td_text_list)):
-    news_table_td_text_list[i][0] = dates_list[i]
-    news_table_cleaned.append(news_table_td_text_list[i])
-
-st.write(news_table_cleaned[0:10])

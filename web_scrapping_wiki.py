@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 
-def GetTable():
+def get_table():
     try:
         url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
         headers = []
@@ -27,7 +27,7 @@ def GetTable():
         exit(84)
 
 
-def SaveTab(headers_clean, tab):
+def save_tab(headers_clean, tab):
     try:
         df = pd.DataFrame(columns=headers_clean)
 
@@ -49,8 +49,8 @@ def SaveTab(headers_clean, tab):
 
 
 def main():
-    headers_clean, tab = GetTable()
-    SaveTab(headers_clean, tab)
+    headers_clean, tab = get_table()
+    save_tab(headers_clean, tab)
     return (0)
 
 
