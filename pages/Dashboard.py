@@ -1,5 +1,5 @@
 #!/usr/local/bin/python3
-
+import numpy as np
 import re
 import json
 import csv
@@ -42,7 +42,7 @@ def scrapping_income_statement_from_yahoo_finance(ticker):
     return text
 
 
-text = scrapping_income_statement_from_yahoo_finance("AOS")
+text = scrapping_income_statement_from_yahoo_finance("AMGN")
 
 index_start = text.index("ttm")
 index_end = text.index("Net Income")
@@ -50,10 +50,10 @@ index_end = text.index("Net Income")
 data = text[index_start: index_end+6]
 
 regex_numbers = '-?\d+,?\d+,?\d+'
-data_numbers = [re.findall(regex_numbers, string) for string in data]
+data_numbers = [re.findall(regex_numbers, string) for string in data][5:]
 
-data_numbers_cleaned = [match for match in data_numbers[5:] if len(match) > 0]
-data_numbers_flat = sum(data_numbers_cleaned, [])
+#data_numbers_cleaned = [match for match in data_numbers if len(match) > 0]
+#data_numbers_flat = sum(data_numbers_cleaned, [])
 
 regex_text = '\D+'
 data_texts = [re.findall(regex_text, string) for string in data]
@@ -72,7 +72,20 @@ data_dates_flat = sum(data_dates_cleaned, [])
 
 data_dates_flat.insert(0, "ttm")
 
-print(data_dates_flat)
+empty_lists_index_in_data_numbers = [i for i, j in enumerate(data_numbers) if j == []]
+
+
+index_spread_between_empty_lists = [empty_lists_index_in_data_numbers[i] - empty_lists_index_in_data_numbers[i-1] for i in range(1, len(empty_lists_index_in_data_numbers))]
+
+
+
+for i in range(len(index_spread_between_empty_lists)):
+    if (index_spread_between_empty_lists[i] != 1) and (index_spread_between_empty_lists[i] != 6):
+        for _ in range(6 - index_spread_between_empty_lists[i]):
+            data_numbers[empty_lists_index_in_data_numbers[i+1]].insert(empty_lists_index_in_data_numbers[i+1], np.nan)
+
+data_numbers_flat = sum(data_numbers, [])
+         
 
 df = pd.DataFrame(columns=data_dates_flat, index=data_text_flat)
 
@@ -87,3 +100,5 @@ for i in range(len(df.index) - 1):
 df.loc[df.index[-1]] = data_numbers_flat[-5:]
 
 st.write(df)
+
+
