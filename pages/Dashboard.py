@@ -42,7 +42,7 @@ def scrapping_income_statement_from_yahoo_finance(ticker):
     return text
 
 
-text = scrapping_income_statement_from_yahoo_finance("AMGN")
+text = scrapping_income_statement_from_yahoo_finance(ticker)
 
 index_start = text.index("ttm")
 index_end = text.index("Net Income")
@@ -51,9 +51,6 @@ data = text[index_start: index_end+6]
 
 regex_numbers = '-?\d+,?\d+,?\d+'
 data_numbers = [re.findall(regex_numbers, string) for string in data][5:]
-
-#data_numbers_cleaned = [match for match in data_numbers if len(match) > 0]
-#data_numbers_flat = sum(data_numbers_cleaned, [])
 
 regex_text = '\D+'
 data_texts = [re.findall(regex_text, string) for string in data]
