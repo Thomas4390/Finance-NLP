@@ -54,7 +54,6 @@ def GetTab(EnterpriseLetter):
         MainTab = driver.find_elements(By.XPATH, "//*[@class='D(tbrg)']")
         ParseTab = MainTab[0].text
         ParseTab = ParseTab.replace(",", ".")
-        ParseTab = ParseTab.replace("-", "")
         ParseTab = ParseTab.split("\n")
         for element in ParseTab:
             with open("StatTab.csv", "a") as f:
