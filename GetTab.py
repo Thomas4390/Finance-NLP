@@ -32,12 +32,13 @@ def GetTitle(driver):
         f.write("Breakdown" + "," + MainTitle + "\n")
 
 
-def GetTab():
+def GetTab(EnterpriseLetter):
     temp = 0
     driver = webdriver.Chrome()
+    website = "https://ca.finance.yahoo.com/quote/" + EnterpriseLetter + "/financials?p=" + EnterpriseLetter
 
     try:
-        driver.get("https://ca.finance.yahoo.com/quote/ATVI/financials?p=ATVI")
+        driver.get(website)
         driver.set_page_load_timeout(30)
         cookies = driver.find_elements(
             By.XPATH, "//*[@class='btn secondary accept-all consent_reject_all_2']"
@@ -75,8 +76,7 @@ def GetTab():
 
 
 def main():
-    GetTab()
-
+    GetTab("AAPL")
 
 if __name__ == "__main__":
     main()
