@@ -35,7 +35,12 @@ def GetTitle(driver):
 def GetTab(EnterpriseLetter):
     temp = 0
     driver = webdriver.Chrome()
-    website = "https://ca.finance.yahoo.com/quote/" + EnterpriseLetter + "/financials?p=" + EnterpriseLetter
+    website = (
+        "https://ca.finance.yahoo.com/quote/"
+        + EnterpriseLetter
+        + "/financials?p="
+        + EnterpriseLetter
+    )
 
     try:
         driver.get(website)
@@ -77,6 +82,7 @@ def GetTab(EnterpriseLetter):
 
 def main():
     GetTab("AAPL")
+
 
 if __name__ == "__main__":
     main()
