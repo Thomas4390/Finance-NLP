@@ -72,7 +72,7 @@ def GetTab(EnterpriseLetter):
                 # MANAGE EMPTY LINE
                 else:
                     element = element + ","
-                    f.write("\n" + element)
+                    f.write(",,,,\n" + element)
                     # print("\n", element, end="")
                     temp = 1
     except:
