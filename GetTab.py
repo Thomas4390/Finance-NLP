@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 from time import sleep
 
 
@@ -34,22 +35,40 @@ def GetTitle(driver):
 
 def GetTab(EnterpriseLetter):
     temp = 0
-    driver = webdriver.Chrome()
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument("--nogpu")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--window-size=1280,1280")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--enable-javascript")
+    chrome_options.add_argument('--disable-blink-features=AutomationControlled')
+    chrome_options.add_argument('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36')
+    
+    driver = webdriver.Chrome(options=chrome_options)
     website = (
         "https://ca.finance.yahoo.com/quote/"
         + EnterpriseLetter
         + "/financials?p="
         + EnterpriseLetter
     )
-
     try:
         driver.get(website)
         driver.set_page_load_timeout(30)
+    except:
+        print("Can't open the website")
+        exit(84)
+
+    try:
         cookies = driver.find_elements(
             By.XPATH, "//*[@class='btn secondary accept-all consent_reject_all_2']"
         )
         sleep(0.5)
         cookies[0].click()
+    except:
+        pass
+
+    try:
         GetTitle(driver)
         MainTab = driver.find_elements(By.XPATH, "//*[@class='D(tbrg)']")
         ParseTab = MainTab[0].text
