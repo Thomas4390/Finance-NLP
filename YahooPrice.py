@@ -7,17 +7,16 @@ import datetime as dt
 import pandas_datareader.data as web
 import plotly.graph_objects as go
 
-def PriceChart(IndexEnterprise):
+def PriceChart(IndexEnterprise, YearsDuration):
     yahoo_financials = YahooFinancials(IndexEnterprise)
     ticker = yf.Ticker(IndexEnterprise)
     CurrentPrice = yahoo_financials.get_current_price()
-    aapl_df = ticker.history(period="5y")
+    aapl_df = ticker.history(period=str(YearsDuration) + "y")
     plt.ylabel('Price')
     aapl_df['Close'].plot(title=IndexEnterprise + "'s stock price\nActual Price (USD) : " + str(CurrentPrice))
     plt.show()
 
 def PriceChart2(IndexEnterprise, BeginYears):
-    # Customized OHLC
     start = dt.datetime(BeginYears,1,1)
     end = dt.datetime.now()
 
@@ -52,5 +51,5 @@ def PriceChart2(IndexEnterprise, BeginYears):
     c_candlestick.show()
 
 #The best is the PriceChart2() function.
-#PriceChart("AAPL")
+#PriceChart("AAPL", 10)
 #PriceChart2("AAPL", 2019)

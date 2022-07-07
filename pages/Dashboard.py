@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/bin/python3
 import numpy as np
 import re
 import json
@@ -97,5 +97,3 @@ for i in range(len(df.index) - 1):
 df.loc[df.index[-1]] = data_numbers_flat[-5:]
 
 st.write(df)
-
-
