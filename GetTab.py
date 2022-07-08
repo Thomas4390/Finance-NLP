@@ -39,7 +39,7 @@ def GetTitle(driver):
         f.write("Breakdown" + "," + MainTitle + "\n")
 
 
-def GetTab(EnterpriseLetter):
+def GetTab(ticker):
     temp = 0
     service = Service(ChromeDriverManager().install())
     chrome_options = Options()
@@ -55,9 +55,9 @@ def GetTab(EnterpriseLetter):
     driver = webdriver.Chrome(service=service, options=chrome_options)
     website = (
         "https://ca.finance.yahoo.com/quote/"
-        + EnterpriseLetter
+        + ticker
         + "/financials?p="
-        + EnterpriseLetter
+        + ticker
     )
     try:
         driver.get(website)

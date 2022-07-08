@@ -9,10 +9,10 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import streamlit as st
-from GetTab import GetCSV
+from pietroski import GetPietroskiScore
 
 #Le nom de la page
-st.markdown("Dashboard")
+st.title("Dashboard")
 
 df = pd.read_csv("sp500.csv")
 
@@ -21,6 +21,10 @@ tickers = df["Symbol"].unique()
 
 # On créer une side bar qui nous permettra de choisir le ticker dans l'application
 ticker = st.sidebar.selectbox("Choose a ticker", tickers)
+
+pietroski_score = GetPietroskiScore(ticker)
+
+st.write("**Pietroski F score:** ", pietroski_score)
 
 security_name = df.loc[df["Symbol"] == ticker]["Security"].values[0]
 sector_name = df.loc[df["Symbol"] == ticker]["GICS Sector"].values[0]

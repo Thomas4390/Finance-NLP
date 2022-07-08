@@ -3,7 +3,7 @@
 from bs4 import BeautifulSoup
 import requests
 
-def GetPietroskiScore(Company):
+def GetPietroskiScore(Company : str = "MMM"):
     try:
         url = "https://www.gurufocus.com/term/fscore/NAS:" + Company + "/Piotroski-F-Score/"
         response = requests.Session().get(url, headers={
@@ -21,7 +21,7 @@ def GetPietroskiScore(Company):
         return("None")
 
 def main():
-    GetPietroskiScore("GOOGL")
+    GetPietroskiScore("MMM")
 
 if __name__ == "__main__":
     main()
