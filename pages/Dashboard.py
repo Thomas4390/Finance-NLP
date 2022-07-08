@@ -1,17 +1,9 @@
 #!/usr/bin/python3
-from inspect import getclosurevars
-import numpy as np
-import re
-import json
-import csv
-from io import StringIO
-import requests
-from bs4 import BeautifulSoup
 import pandas as pd
 import streamlit as st
 from pietroski import GetPietroskiScore
 
-#Le nom de la page
+# Le nom de la page
 st.title("Dashboard")
 
 df = pd.read_csv("sp500.csv")
@@ -31,11 +23,16 @@ sector_name = df.loc[df["Symbol"] == ticker]["GICS Sector"].values[0]
 industry_name = df.loc[df["Symbol"] == ticker]["GICS Sub-Industry"].values[0]
 
 # On affiche ce qu'on à sélectionné dans la side bar
-st.write("**Ticker**: ", ticker,
-         " || **Security:** ", security_name,
-         " || **Sector:** ", sector_name,
-         " || **Industry:** ", industry_name)
+st.write(
+    "**Ticker**: ",
+    ticker,
+    " || **Security:** ",
+    security_name,
+    " || **Sector:** ",
+    sector_name,
+    " || **Industry:** ",
+    industry_name,
+)
 
 df_stat_tab = pd.read_csv("StatTab.csv")
 st.write(df_stat_tab)
-

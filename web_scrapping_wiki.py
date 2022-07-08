@@ -13,8 +13,7 @@ def get_table():
 
         page = requests.get(url)
         soup = BeautifulSoup(page.text, "lxml")
-        table = soup.find(
-            "table", {"class": "wikitable sortable"}, id="constituents")
+        table = soup.find("table", {"class": "wikitable sortable"}, id="constituents")
 
         for i in table.find_all("th"):
             title = i.text
@@ -41,7 +40,7 @@ def save_tab(headers_clean, tab):
             df[col] = df[col].str.replace("\n", "")
 
         df["Founded"] = df["Founded"].str[:4]
-        #print(df.head(10))
+        # print(df.head(10))
         df.to_csv("sp500.csv", index=False)
     except:
         print("Error saving table")
@@ -51,7 +50,7 @@ def save_tab(headers_clean, tab):
 def main():
     headers_clean, tab = get_table()
     save_tab(headers_clean, tab)
-    return (0)
+    return 0
 
 
 if __name__ == "__main__":
