@@ -72,4 +72,3 @@ def PriceChartPlotly(ticker, start_year):
     c_candlestick.update_yaxes(title_text=ticker + " Close Price", tickprefix="$")
 
     return c_candlestick
-
