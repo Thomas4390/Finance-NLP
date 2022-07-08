@@ -20,8 +20,8 @@ def PriceChart(ticker, YearsDuration):
     plt.show()
 
 
-def PriceChartPlotly(ticker, BeginYears):
-    start = dt.datetime(BeginYears, 1, 1)
+def PriceChartPlotly(ticker, start_year):
+    start = dt.datetime(start_year, 1, 1)
     end = dt.datetime.now()
 
     stocks = web.DataReader([ticker], "yahoo", start, end)
@@ -58,7 +58,7 @@ def PriceChartPlotly(ticker, BeginYears):
         title={
             "text": ticker
             + " SHARE PRICE ("
-            + str(BeginYears)
+            + str(start_year)
             + "-"
             + str(dt.datetime.now().year)
             + ")",
