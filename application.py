@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 import streamlit as st
+import json
+import datetime as dt
 
 
 def get_news_table_finviz():
@@ -134,6 +136,8 @@ def dates_to_clean_datetime_dates(news_table_td_text_list) -> list:
         # We can now convert the Series to a list
         dates_list = dates_series_dt.tolist()
 
+        #dates_list = [dt.datetime.strftime(date, '%m-%d-%y %I:%M%p') for date in dates_list]
+
         return dates_list
 
     except:
@@ -175,7 +179,8 @@ def main():
     news_table_td_text_list = extracting_date_and_title(news_table)
     dates_list = dates_to_clean_datetime_dates(news_table_td_text_list)
     news_table_cleaned = append_dates_and_title(dates_list, news_table_td_text_list)
-    st.write(news_table_cleaned)
+    df = pd.DataFrame(news_table_cleaned, columns=["Date", "Title"])
+    st.write(df)
 
 if __name__ == '__main__':
     main()
