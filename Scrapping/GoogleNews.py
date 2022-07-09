@@ -1,7 +1,5 @@
 #!/usr/bin/python3
-from locale import DAY_1
 from selenium import webdriver
-from time import sleep
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
@@ -19,8 +17,8 @@ def Connection():
     driver = webdriver.Chrome(options=chrome_options)
     return (driver)
 
-def GoogleNews(driver, CryptoCurrency):
-    url = "https://www.google.com/search?q=" + CryptoCurrency.lower() + "+crypto"
+def GoogleNews(driver, Enterprise):
+    url = "https://www.google.com/search?q=" + Enterprise.upper()
     driver.get(url)
     driver.set_page_load_timeout(30)
     try:
@@ -48,7 +46,7 @@ def GoogleNews(driver, CryptoCurrency):
 
 def main():
     driver = Connection()
-    GoogleNews(driver, "egld")
+    GoogleNews(driver, "aapl")
 
 if __name__ == "__main__":
     main()
