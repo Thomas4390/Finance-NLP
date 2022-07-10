@@ -10,12 +10,10 @@ import datetime as dt
 
 
 def get_news_table_finviz():
-
     """This function allows you to obtain the news table from the symbol (ticker) of an action selected directly in the Streamlit application.
     We are getting the data from Finviz.
         Parameters:
         -----------
-
         Returns:
         --------
         An html object containing the news table.
@@ -24,14 +22,16 @@ def get_news_table_finviz():
 
         df = pd.read_csv("sp500.csv")  # Loading Data in a DataFrame
 
-        tickers = df["Symbol"].unique()  # Making sure that all tickers are unique
+        # Making sure that all tickers are unique
+        tickers = df["Symbol"].unique()
         ticker = st.sidebar.selectbox(
             "Choose a ticker", tickers
         )  # Letting the users to choose a ticker directly in the Streamlit application
 
         st.write("You selected: ", ticker)
 
-        finviz_url = "https://finviz.com/quote.ashx?t="  # Finviz url without the ticker specified
+        # Finviz url without the ticker specified
+        finviz_url = "https://finviz.com/quote.ashx?t="
         session_obj = requests.Session()  # Creating a session object
         ticker_url = finviz_url + ticker  # Finviz url with the ticker specified
 
@@ -39,7 +39,8 @@ def get_news_table_finviz():
             ticker_url, headers={"User-Agent": "Mozilla/5.0"}
         )  # Response object from the session object. return 200 if ok. return 404 if not.
 
-        html = BeautifulSoup(response.text, "html.parser")  # Parsing the html code
+        # Parsing the html code
+        html = BeautifulSoup(response.text, "html.parser")
         news_table = html.find(id="news-table")  # Finding the news table
 
         return news_table  # Returning the news table
@@ -51,12 +52,10 @@ def get_news_table_finviz():
 
 def extracting_date_and_title(news_table) -> list:
     """This function extracts the date and title of the news from the news table.
-
     Parameters
     ----------
     news_table : html object
         The news table from the Finviz website.
-
     Returns
     -------
     list
@@ -87,12 +86,10 @@ def extracting_date_and_title(news_table) -> list:
 
 def dates_to_clean_datetime_dates(news_table_td_text_list) -> list:
     """This function clean the date and convert them into a datetime format.
-
     Parameters
     ----------
     news_table_td_text_list :
         A list of the date and title for each article.
-
     Returns
     -------
     list(datetime.datetime)
@@ -154,14 +151,12 @@ def dates_to_clean_datetime_dates(news_table_td_text_list) -> list:
 
 def append_dates_and_title(dates_list, news_table_td_text_list) -> list:
     """This function append the date and title of the news to the list of dates.
-
     Parameters
     ----------
     dates_list : list(datetime.datetime)
         A list of the cleaned date in datetime format.
     news_table_td_text_list : list
         A list of the date and title for each article.
-
     Returns
     -------
     list(datetime.datetime, string)
@@ -186,7 +181,8 @@ def main():
     news_table = get_news_table_finviz()
     news_table_td_text_list = extracting_date_and_title(news_table)
     dates_list = dates_to_clean_datetime_dates(news_table_td_text_list)
-    news_table_cleaned = append_dates_and_title(dates_list, news_table_td_text_list)
+    news_table_cleaned = append_dates_and_title(
+        dates_list, news_table_td_text_list)
     df = pd.DataFrame(news_table_cleaned, columns=["Date", "Title"])
     st.write(df)
 

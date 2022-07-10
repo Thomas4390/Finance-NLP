@@ -37,7 +37,7 @@ def GoogleNews(driver, Enterprise):
             with open("GoogleNews.txt", "a") as f:
                 Titles = elem.text.replace("...", "")
                 SousTexts = SousText[i].text.replace("...", "")
-                Times = Time[i].text.replace("Il y a ", "")
+                Times = Time[i].text.replace("There is ", "")
                 f.write(Titles + "\n" + SousTexts + "\n" + Times + "\n")
                 f.write("\n")
     except:

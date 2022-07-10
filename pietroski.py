@@ -31,7 +31,7 @@ def GetPietroskiScore(Company: str = "MMM"):
 
 
 def main():
-    GetPietroskiScore("MMM")
+    GetPietroskiScore()
 
 
 if __name__ == "__main__":
