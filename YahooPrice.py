@@ -7,6 +7,7 @@ import datetime as dt
 import pandas_datareader.data as web
 import plotly.graph_objects as go
 
+
 def PriceChartPlotly(ticker, start_year):
     start = dt.datetime(start_year, 1, 1)
     end = dt.datetime.now()

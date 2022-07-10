@@ -7,6 +7,7 @@ import pandas as pd
 import streamlit as st
 import json
 import datetime as dt
+from transformers import BertTokenizer, BertForSequenceClassification, pipeline
 
 
 def get_news_table_finviz():
@@ -176,16 +177,32 @@ def append_dates_and_title(dates_list, news_table_td_text_list) -> list:
         exit(84)
 
 
-def main():
+def get_df():
     """This function is the main function of the application."""
     news_table = get_news_table_finviz()
     news_table_td_text_list = extracting_date_and_title(news_table)
     dates_list = dates_to_clean_datetime_dates(news_table_td_text_list)
-    news_table_cleaned = append_dates_and_title(
-        dates_list, news_table_td_text_list)
+    news_table_cleaned = append_dates_and_title(dates_list, news_table_td_text_list)
     df = pd.DataFrame(news_table_cleaned, columns=["Date", "Title"])
-    st.write(df)
+    return df
 
+def sentiment_analysis(df : pd.DataFrame):
+    titles = df["Title"].to_list()
+    finbert = BertForSequenceClassification.from_pretrained(
+        'yiyanghkust/finbert-tone', num_labels=3)
+    tokenizer = BertTokenizer.from_pretrained('yiyanghkust/finbert-tone')
+    nlp = pipeline("text-classification", model=finbert, tokenizer=tokenizer)
+    results = nlp(titles)
+    df_sentiment_analysis = pd.DataFrame.from_records(results)
+
+    return df_sentiment_analysis
+
+def concat_results(df1 : pd.DataFrame, df2 : pd.DataFrame):
+    df_results = pd.concat([df1, df2], axis=1)
+    return df_results
 
 if __name__ == "__main__":
-    main()
+    df = get_df()
+    df_sentiment_analysis = sentiment_analysis(df)
+    df_results = concat_results(df, df_sentiment_analysis)
+    st.write(df_results)
