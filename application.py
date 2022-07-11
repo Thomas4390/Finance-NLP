@@ -8,7 +8,15 @@ import streamlit as st
 import json
 import datetime as dt
 from transformers import BertTokenizer, BertForSequenceClassification, pipeline
+import sys
+from GoogleNews import get_google_news
 
+df = pd.read_csv("sp500.csv")  # Loading Data in a DataFrame
+
+# Making sure that all tickers are unique
+tickers = df["Symbol"].unique()
+ticker = st.sidebar.selectbox("Choose a ticker", tickers)  # Letting the users to choose a ticker directly in the Streamlit application
+st.write("You selected: ", ticker)
 
 def get_news_table_finviz():
     """This function allows you to obtain the news table from the symbol (ticker) of an action selected directly in the Streamlit application.
@@ -21,15 +29,7 @@ def get_news_table_finviz():
     """
     try:
 
-        df = pd.read_csv("sp500.csv")  # Loading Data in a DataFrame
 
-        # Making sure that all tickers are unique
-        tickers = df["Symbol"].unique()
-        ticker = st.sidebar.selectbox(
-            "Choose a ticker", tickers
-        )  # Letting the users to choose a ticker directly in the Streamlit application
-
-        st.write("You selected: ", ticker)
 
         # Finviz url without the ticker specified
         finviz_url = "https://finviz.com/quote.ashx?t="
@@ -208,7 +208,9 @@ def concat_results(df1: pd.DataFrame, df2: pd.DataFrame):
 
 
 if __name__ == "__main__":
-    df_news_data = get_df_news_data()
-    df_sentiment_analysis = sentiment_analysis(df_news_data)
-    df_results = concat_results(df_news_data, df_sentiment_analysis)
-    st.write(df_results)
+    df_finviz_news = get_df_news_data()
+    df_google_news = get_google_news(ticker)
+    #df_sentiment_analysis = sentiment_analysis(df_finviz_news)
+    #df_results = concat_results(df_finviz_news, df_sentiment_analysis)
+    #st.write(df_finviz_news)
+    st.write(df_google_news)
