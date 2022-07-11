@@ -7,7 +7,7 @@ import pandas as pd
 import streamlit as st
 import json
 import datetime as dt
-from transformers import BertTokenizer, BertConfig, pipeline
+from transformers import BertTokenizer, BertForSequenceClassification, pipelines
 import sys
 from GoogleNews import get_google_news
 
@@ -190,11 +190,11 @@ def get_df_news_data():
 def sentiment_analysis(df_news_data: pd.DataFrame):
 
     titles = df_news_data["Title"].to_list()
-    finbert = BertConfig.from_pretrained(
+    finbert = BertForSequenceClassification.from_pretrained(
         "yiyanghkust/finbert-tone", num_labels=3
     )
     tokenizer = BertTokenizer.from_pretrained("yiyanghkust/finbert-tone")
-    nlp = pipeline("text-classification", model=finbert, tokenizer=tokenizer)
+    nlp = pipelines("text-classification", model=finbert, tokenizer=tokenizer)
     results = nlp(titles)
     df_sentiment_analysis = pd.DataFrame.from_records(results)
 
