@@ -102,7 +102,7 @@ def GoogleNews(driver, Enterprise):
 
 def get_google_news(ticker:str = "GOOGL"):
     driver = Connection()
-    GoogleNews(driver, ticker)
+    return (GoogleNews(driver, ticker))
 
 
 if __name__ == "__main__":
