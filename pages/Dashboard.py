@@ -2,6 +2,7 @@
 import pandas as pd
 import streamlit as st
 from pietroski import GetPietroskiScore
+from GetTab import GetCSV
 
 # Le nom de la page
 st.title("Dashboard")
@@ -33,6 +34,7 @@ st.write(
     " || **Industry:** ",
     industry_name,
 )
-
-df_stat_tab = pd.read_csv("StatTab.csv")
-st.write(df_stat_tab)
+if __name__ == '__main__':
+    GetCSV(ticker)
+    df_stat_tab = pd.read_csv("StatTab.csv")
+    st.write(df_stat_tab)

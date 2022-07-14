@@ -210,7 +210,7 @@ def concat_results(df1: pd.DataFrame, df2: pd.DataFrame):
 if __name__ == "__main__":
     df_finviz_news = get_df_news_data()
     df_google_news = get_google_news(ticker)
-    #df_sentiment_analysis = sentiment_analysis(df_finviz_news)
-    #df_results = concat_results(df_finviz_news, df_sentiment_analysis)
-    #st.write(df_finviz_news)
+    df_sentiment_analysis = sentiment_analysis(df_finviz_news)
+    df_results = concat_results(df_finviz_news, df_sentiment_analysis)
+    st.write(df_results)
     st.write(df_google_news)
