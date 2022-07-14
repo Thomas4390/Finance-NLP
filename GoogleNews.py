@@ -31,7 +31,7 @@ def Connection():
     chrome_options.add_argument(
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36"
     )
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+    driver = webdriver.Chrome(options=chrome_options)
     return driver
 
 
@@ -101,12 +101,9 @@ def GoogleNews(driver, Enterprise):
     except:
         print("No News")
         
-
-
 def get_google_news(ticker:str = "GOOGL"):
     driver = Connection()
     return GoogleNews(driver, ticker)
-
 
 if __name__ == "__main__":
     get_google_news()

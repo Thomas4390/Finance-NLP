@@ -7,7 +7,7 @@ import pandas as pd
 import streamlit as st
 import json
 import datetime as dt
-from transformers import BertTokenizer, BertForSequenceClassification, pipeline
+from transformers import BertTokenizer, BertForSequenceClassification, pipelines
 import sys
 from GoogleNews import get_google_news
 
@@ -194,7 +194,7 @@ def sentiment_analysis(df_news_data: pd.DataFrame):
         "yiyanghkust/finbert-tone", num_labels=3
     )
     tokenizer = BertTokenizer.from_pretrained("yiyanghkust/finbert-tone")
-    nlp = pipeline("text-classification", model=finbert, tokenizer=tokenizer)
+    nlp = pipelines("text-classification", model=finbert, tokenizer=tokenizer)
     results = nlp(titles)
     df_sentiment_analysis = pd.DataFrame.from_records(results)
 
