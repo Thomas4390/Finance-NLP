@@ -7,9 +7,10 @@ import pandas as pd
 import streamlit as st
 import json
 import datetime as dt
-from transformers import BertTokenizer, BertForSequenceClassification, pipelines
 import sys
 from GoogleNews import get_google_news
+from transformers import BertTokenizer, BertForSequenceClassification
+from transformers import pipeline
 
 df = pd.read_csv("sp500.csv")  # Loading Data in a DataFrame
 
@@ -186,20 +187,54 @@ def get_df_news_data():
     df_news_data = pd.DataFrame(news_table_cleaned, columns=["Date", "Title"])
     return df_news_data
 
+def from_df_to_text_list(df: pd.DataFrame, column_name: str = 'Title') -> list:
+    """This function convert the dataframe into a list of strings.
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The dataframe containing the news.
+    column_name : str
+        The name of the column to convert.
+    Returns
+    -------
+    list
+        A list of strings.
+    """
+    try:
+        text_list = []
+        for index, row in df.iterrows():
+            text_list.append(row[column_name])
+        return text_list
 
-def sentiment_analysis(df_news_data: pd.DataFrame):
+    except:
+        st.write("Error converting dataframe into list")
+        exit(84)
 
-    titles = df_news_data["Title"].to_list()
-    finbert = BertForSequenceClassification.from_pretrained(
-        "yiyanghkust/finbert-tone", num_labels=3
-    )
-    tokenizer = BertTokenizer.from_pretrained("yiyanghkust/finbert-tone")
-    nlp = pipelines("text-classification", model=finbert, tokenizer=tokenizer)
-    results = nlp(titles)
-    df_sentiment_analysis = pd.DataFrame.from_records(results)
+def from_text_list_to_sentiment_df(text_list: list) -> pd.DataFrame:
+    """This function convert the list of strings into a list of sentiment scores.
+    Parameters
+    ----------
+    text_list : list
+        A list of strings.
+    Returns
+    -------
+    DataFrame
+        A Dataframe of sentiment scores.
+    """
+    try:
+        finbert = BertForSequenceClassification.from_pretrained(
+            'yiyanghkust/finbert-tone', num_labels=3)
+        tokenizer = BertTokenizer.from_pretrained('yiyanghkust/finbert-tone')
+        nlp = pipeline("sentiment-analysis", model=finbert, tokenizer=tokenizer)
+        results = nlp(text_list)
+        df_results = pd.DataFrame(results)
 
-    return df_sentiment_analysis
+        return df_results
 
+    except:
+        st.write("Error converting list of strings into list of sentiment scores")
+        exit(84)
+    
 
 def concat_results(df1: pd.DataFrame, df2: pd.DataFrame):
 
@@ -210,7 +245,7 @@ def concat_results(df1: pd.DataFrame, df2: pd.DataFrame):
 if __name__ == "__main__":
     df_finviz_news = get_df_news_data()
     df_google_news = get_google_news(ticker)
-    #df_sentiment_analysis = sentiment_analysis(df_finviz_news)
-    #df_results = concat_results(df_finviz_news, df_sentiment_analysis)
-    #st.write(df_finviz_news)
-    st.write(df_google_news)
+    text_list = from_df_to_text_list(df_finviz_news, column_name='Title')
+    df_results = from_text_list_to_sentiment_df(text_list)
+    df_concat = concat_results(df_finviz_news, df_results)
+    st.write(df_concat)
