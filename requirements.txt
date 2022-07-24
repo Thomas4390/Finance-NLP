@@ -1,6 +1,6 @@
 beautifulsoup4==4.11.1
 matplotlib==3.5.2
-numpy==1.23.0
+numpy==1.22.4
 pandas==1.4.3
 pandas_datareader==0.10.0
 plotly==5.9.0
