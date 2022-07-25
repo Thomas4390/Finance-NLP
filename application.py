@@ -11,6 +11,8 @@ import sys
 from GoogleNews import get_google_news
 from transformers import BertTokenizer, BertForSequenceClassification
 from transformers import pipeline
+import plotly.graph_objs as go
+import matplotlib.pyplot as plt
 
 df = pd.read_csv("sp500.csv")  # Loading Data in a DataFrame
 
@@ -241,11 +243,74 @@ def concat_results(df1: pd.DataFrame, df2: pd.DataFrame):
     df_results = pd.concat([df1, df2], axis=1)
     return df_results
 
+def count_sentiment_over_time(df: pd.DataFrame) -> pd.DataFrame:
+    """This function count the number of positive, negative and neutral sentiment over time.
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The dataframe containing the news.
+    Returns
+    -------
+    pd.DataFrame
+        A Dataframe of the number of positive, negative and neutral sentiment over time.
+    """
+
+    negative_count_list = []
+    positive_count_list = []
+    neutral_count_list = []
+    label_list = list(df['label'])
+
+    for i in range(len(label_list)):
+        neutral_count_list.insert(0, label_list[-i-1:].count("Neutral"))
+        positive_count_list.insert(0, label_list[-i-1:].count("Positive"))
+        negative_count_list.insert(0, label_list[-i-1:].count("Negative"))
+
+    df["negative_count"] = negative_count_list
+    df["positive_count"] = positive_count_list
+    df["neutral_count"] = neutral_count_list
+
+    return df
+
+    
+
+def plot_sentiment(df: pd.DataFrame):
+    """This function plot the sentiment scores.
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The dataframe containing the sentiment scores.
+    """
+    try:
+        fig = go.Figure()
+        fig.add_trace(
+            go.Line(x=df["Date"], y=df["negative_count"], name="Negative", marker_color="red"))
+        fig.add_trace(
+            go.Line(x=df["Date"], y=df["positive_count"], name="Positive", marker_color="green"))
+        fig.add_trace(
+            go.Line(x=df["Date"], y=df["neutral_count"], name="Neutral", marker_color="blue"))
+
+        return fig.show()
+
+    except:
+        st.write("Error plotting sentiment scores")
+        exit(84)
 
 if __name__ == "__main__":
     df_finviz_news = get_df_news_data()
     df_google_news = get_google_news(ticker)
-    text_list = from_df_to_text_list(df_finviz_news, column_name='Title')
-    df_results = from_text_list_to_sentiment_df(text_list)
-    df_concat = concat_results(df_finviz_news, df_results)
-    st.write(df_concat)
+
+    text_list_finviz = from_df_to_text_list(df_finviz_news, column_name='Title')
+    text_list_google = from_df_to_text_list(df_google_news, column_name='Subtitle')
+
+    df_results_finviz = from_text_list_to_sentiment_df(text_list_finviz)
+    df_results_google = from_text_list_to_sentiment_df(text_list_google)
+
+    df_concat_finviz = concat_results(df_finviz_news, df_results_finviz)
+    df_concat_google = concat_results(df_google_news, df_results_google)
+
+    df_finviz_final = count_sentiment_over_time(df_concat_finviz)
+    df_google_final = count_sentiment_over_time(df_concat_google)
+
+
+    st.write(plot_sentiment(df_finviz_final))
+    
