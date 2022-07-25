@@ -91,7 +91,7 @@ def GoogleNews(driver, Enterprise):
                      for elem in SousText][:MAX_RANGE]
 
         df = pd.DataFrame(
-            data={'Time': DateTimes, 'Titles': Titles, 'Subtitle': SousTexts})
+            data={'Date': DateTimes, 'Title': Titles, 'Subtitle': SousTexts})
 
         return df
 

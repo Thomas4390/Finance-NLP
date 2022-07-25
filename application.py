@@ -280,20 +280,18 @@ def plot_sentiment(df: pd.DataFrame):
     df : pd.DataFrame
         The dataframe containing the sentiment scores.
     """
-    try:
-        fig = go.Figure()
-        fig.add_trace(
-            go.Line(x=df["Date"], y=df["negative_count"], name="Negative", marker_color="red"))
-        fig.add_trace(
-            go.Line(x=df["Date"], y=df["positive_count"], name="Positive", marker_color="green"))
-        fig.add_trace(
-            go.Line(x=df["Date"], y=df["neutral_count"], name="Neutral", marker_color="blue"))
 
-        return fig.show()
+    fig = go.Figure()
 
-    except:
-        st.write("Error plotting sentiment scores")
-        exit(84)
+    fig.add_trace(
+        go.Line(x=df["Date"], y=df["negative_count"], name="Negative", marker_color="red"))
+    fig.add_trace(
+        go.Line(x=df["Date"], y=df["positive_count"], name="Positive", marker_color="green"))
+    fig.add_trace(
+        go.Line(x=df["Date"], y=df["neutral_count"], name="Neutral", marker_color="blue"))
+        
+    return fig.show()
+    
 
 if __name__ == "__main__":
     df_finviz_news = get_df_news_data()
@@ -311,6 +309,9 @@ if __name__ == "__main__":
     df_finviz_final = count_sentiment_over_time(df_concat_finviz)
     df_google_final = count_sentiment_over_time(df_concat_google)
 
+    st.write(df_finviz_final)
+    st.write(df_google_final)
 
     st.write(plot_sentiment(df_finviz_final))
+    st.write(plot_sentiment(df_google_final))
     
