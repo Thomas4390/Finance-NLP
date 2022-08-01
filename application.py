@@ -21,7 +21,7 @@ tickers = df["Symbol"].unique()
 ticker = st.sidebar.selectbox("Choose a ticker", tickers)  # Letting the users to choose a ticker directly in the Streamlit application
 st.write("You selected: ", ticker)
 
-def get_news_table_finviz():
+def get_news_table_finviz(ticker: str = "MMM") -> BeautifulSoup:
     """This function allows you to obtain the news table from the symbol (ticker) of an action selected directly in the Streamlit application.
     We are getting the data from Finviz.
         Parameters:
@@ -180,9 +180,9 @@ def append_dates_and_title(dates_list, news_table_td_text_list) -> list:
         exit(84)
 
 
-def get_df_news_data():
+def get_finviz_news(ticker) -> pd.DataFrame:
     """This function is the main function of the application."""
-    news_table = get_news_table_finviz()
+    news_table = get_news_table_finviz(ticker)
     news_table_td_text_list = extracting_date_and_title(news_table)
     dates_list = dates_to_clean_datetime_dates(news_table_td_text_list)
     news_table_cleaned = append_dates_and_title(dates_list, news_table_td_text_list)
@@ -258,16 +258,20 @@ def count_sentiment_over_time(df: pd.DataFrame) -> pd.DataFrame:
     negative_count_list = []
     positive_count_list = []
     neutral_count_list = []
-    label_list = list(df['label'])
 
-    for i in range(len(label_list)):
-        neutral_count_list.insert(0, label_list[-i-1:].count("Neutral"))
-        positive_count_list.insert(0, label_list[-i-1:].count("Positive"))
-        negative_count_list.insert(0, label_list[-i-1:].count("Negative"))
+    try:
+        label_list = list(df['label'])
 
-    df["negative_count"] = negative_count_list
-    df["positive_count"] = positive_count_list
-    df["neutral_count"] = neutral_count_list
+        for i in range(len(label_list)):
+            neutral_count_list.insert(0, label_list[-i-1:].count("Neutral"))
+            positive_count_list.insert(0, label_list[-i-1:].count("Positive"))
+            negative_count_list.insert(0, label_list[-i-1:].count("Negative"))
+
+        df["negative_count"] = negative_count_list
+        df["positive_count"] = positive_count_list
+        df["neutral_count"] = neutral_count_list
+    except:
+        pass
 
     return df
 
@@ -294,24 +298,24 @@ def plot_sentiment(df: pd.DataFrame):
     
 
 if __name__ == "__main__":
-    df_finviz_news = get_df_news_data()
-    df_google_news = get_google_news(ticker)
+    df_finviz_news = get_finviz_news(ticker)
+    #df_google_news = get_google_news(ticker)
 
     text_list_finviz = from_df_to_text_list(df_finviz_news, column_name='Title')
-    text_list_google = from_df_to_text_list(df_google_news, column_name='Subtitle')
+    #text_list_google = from_df_to_text_list(df_google_news, column_name='Subtitle')
 
     df_results_finviz = from_text_list_to_sentiment_df(text_list_finviz)
-    df_results_google = from_text_list_to_sentiment_df(text_list_google)
+    #df_results_google = from_text_list_to_sentiment_df(text_list_google)
 
     df_concat_finviz = concat_results(df_finviz_news, df_results_finviz)
-    df_concat_google = concat_results(df_google_news, df_results_google)
+    #df_concat_google = concat_results(df_google_news, df_results_google)
 
     df_finviz_final = count_sentiment_over_time(df_concat_finviz)
-    df_google_final = count_sentiment_over_time(df_concat_google)
+    #df_google_final = count_sentiment_over_time(df_concat_google)
 
     st.write(df_finviz_final)
-    st.write(df_google_final)
+    #st.write(df_google_final)
 
     st.write(plot_sentiment(df_finviz_final))
-    st.write(plot_sentiment(df_google_final))
+    #st.write(plot_sentiment(df_google_final))
     

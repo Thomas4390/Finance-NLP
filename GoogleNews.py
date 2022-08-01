@@ -100,7 +100,7 @@ def GoogleNews(driver, Enterprise):
         
 
 
-def get_google_news(ticker:str = "GOOGL"):
+def get_google_news(ticker:str = "MMM"):
     driver = Connection()
     return (GoogleNews(driver, ticker))
 
